@@ -48,19 +48,21 @@ def main() -> None:
     url = "https://blendedthread.ca/collections/in-stock"
     response = requests.get(url, headers=headers, verify=False)
     if response.status_code == 200:
-        product_to_check = 'fall'
-        soup = BeautifulSoup(str(response.content), "html.parser")
-        divs = soup.find_all('div', class_='figcaption under text-center')
-        msg = ''
-        for div in divs:
-            item = div.p.text.replace('  ', '').replace('\\n', '')
-            if product_to_check.upper() in item.upper():
-                find_all = div.find_all('span', "money")
-                print(f'{item}={find_all[0].text}')
-                msg += f'{item}={find_all[0].text}. '
-        print(msg)
-        if len(msg) > 1:
-            send_email(product_to_check, msg)
+        products_to_check = ['scrap', 'mystery']
+        for product_to_check in products_to_check:
+            product_to_check = 'scrap'
+            soup = BeautifulSoup(str(response.content), "html.parser")
+            divs = soup.find_all('div', class_='figcaption under text-center')
+            msg = ''
+            for div in divs:
+                item = div.p.text.replace('  ', '').replace('\\n', '')
+                if product_to_check.upper() in item.upper():
+                    find_all = div.find_all('span', "money")
+                    print(f'{item}={find_all[0].text}')
+                    msg += f'{item}={find_all[0].text}. '
+            print(msg)
+            if len(msg) > 1:
+                send_email(product_to_check, msg)
     else:
         print(f'Send text to Michael that it isn\'t working. {response.status_code}')
 
